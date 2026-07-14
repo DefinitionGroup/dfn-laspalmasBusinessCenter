@@ -1,0 +1,39 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import PageBuilder from "@/components/PageBuilder";
+import { resolveImageUrl } from "@/sanity/lib/image";
+import { getAllPageSlugs, getPageBySlug } from "@/sanity/lib/queries";
+import { locales, type Locale } from "@/types/content";
+
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const results = await Promise.all(
+    locales.map(async (locale) => (await getAllPageSlugs(locale)).map((slug) => ({ locale, slug }))),
+  );
+  return results.flat();
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale: value, slug } = await params;
+  if (!locales.includes(value as Locale)) return {};
+  const locale = value as Locale;
+  const page = await getPageBySlug(slug, locale);
+  if (!page) return {};
+  const image = resolveImageUrl(page.metadata?.image, { width: 1200, height: 630 });
+  return {
+    title: page.metadata?.title || page.title,
+    description: page.metadata?.description,
+    alternates: { canonical: `/${locale}/${slug}` },
+    openGraph: { title: page.metadata?.title || page.title, description: page.metadata?.description, images: image ? [image] : [] },
+  };
+}
+
+export default async function DynamicPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale: value, slug } = await params;
+  if (!locales.includes(value as Locale)) notFound();
+  const locale = value as Locale;
+  const page = await getPageBySlug(slug, locale);
+  if (!page) notFound();
+  return <PageBuilder content={page.content} locale={locale} />;
+}

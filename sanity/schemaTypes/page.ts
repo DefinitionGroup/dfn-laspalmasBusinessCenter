@@ -1,0 +1,96 @@
+import { defineArrayMember, defineField, defineType } from "sanity";
+
+export const page = defineType({
+  name: "page",
+  title: "Page",
+  type: "document",
+  groups: [
+    { name: "basic", title: "Basic", default: true },
+    { name: "content", title: "Content" },
+    { name: "settings", title: "Settings" },
+    { name: "seo", title: "SEO" },
+  ],
+  fields: [
+    defineField({ name: "title", title: "Title", type: "string", group: "basic", validation: (Rule) => Rule.required() }),
+    defineField({
+      name: "language",
+      title: "Language",
+      type: "string",
+      group: "basic",
+      initialValue: "es",
+      options: { list: [{ title: "Español", value: "es" }, { title: "English", value: "en" }], layout: "radio" },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      group: "basic",
+      options: {
+        source: "title",
+        isUnique: async (value, context) => {
+          const document = context.document;
+          const id = document?._id.replace(/^drafts\./, "");
+          const client = context.getClient({ apiVersion: "2026-07-14" });
+          const count = await client.fetch<number>(
+            `count(*[_type == "page" && language == $language && slug.current == $slug && !(_id in [$publishedId, $draftId])])`,
+            { language: document?.language, slug: value, publishedId: id, draftId: `drafts.${id}` },
+          );
+          return count === 0;
+        },
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "isHomepage",
+      title: "Homepage",
+      type: "boolean",
+      group: "settings",
+      initialValue: false,
+      description: "One homepage per language.",
+      validation: (Rule) =>
+        Rule.custom(async (value, context) => {
+          if (!value) return true;
+          const document = context.document;
+          const id = document?._id.replace(/^drafts\./, "");
+          const client = context.getClient({ apiVersion: "2026-07-14" });
+          const count = await client.fetch<number>(
+            `count(*[_type == "page" && language == $language && isHomepage == true && !(_id in [$publishedId, $draftId])])`,
+            { language: document?.language, publishedId: id, draftId: `drafts.${id}` },
+          );
+          return count === 0 || "Another homepage already exists for this language.";
+        }),
+    }),
+    defineField({
+      name: "navbarVariant",
+      title: "Navigation contrast",
+      type: "string",
+      group: "settings",
+      initialValue: "light",
+      options: { list: [{ title: "Light text", value: "light" }, { title: "Dark text", value: "dark" }], layout: "radio" },
+    }),
+    defineField({ name: "metadata", title: "Metadata", type: "metadata", group: "seo" }),
+    defineField({
+      name: "content",
+      title: "Page builder",
+      type: "array",
+      group: "content",
+      of: [
+        defineArrayMember({ type: "heroBlock" }),
+        defineArrayMember({ type: "introBlock" }),
+        defineArrayMember({ type: "spaceListBlock" }),
+        defineArrayMember({ type: "featureListBlock" }),
+        defineArrayMember({ type: "splitContentBlock" }),
+        defineArrayMember({ type: "galleryBlock" }),
+        defineArrayMember({ type: "testimonialBlock" }),
+        defineArrayMember({ type: "locationBlock" }),
+        defineArrayMember({ type: "ctaBlock" }),
+      ],
+      validation: (Rule) => Rule.min(1),
+    }),
+  ],
+  preview: {
+    select: { title: "title", language: "language", homepage: "isHomepage" },
+    prepare: ({ title, language, homepage }) => ({ title, subtitle: `${language?.toUpperCase() || ""}${homepage ? " · Homepage" : ""}` }),
+  },
+});
