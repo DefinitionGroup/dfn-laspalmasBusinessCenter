@@ -1,4 +1,4 @@
-import type { PortableTextBlock } from "@portabletext/types";
+import type { PortableTextBlock as PortableTextValueBlock } from "@portabletext/types";
 
 export type Locale = "es" | "en";
 export const locales: Locale[] = ["es", "en"];
@@ -17,7 +17,18 @@ export type SanityImage =
       hotspot?: Record<string, number>;
     };
 
-export type RichText = PortableTextBlock[] | string;
+export type SanityVideo =
+  | string
+  | {
+      asset?: {
+        _ref?: string;
+        _type?: string;
+        url?: string;
+        mimeType?: string;
+      };
+    };
+
+export type RichText = PortableTextValueBlock[] | string;
 
 type BaseBlock = {
   _key: string;
@@ -29,7 +40,8 @@ export type HeroBlock = BaseBlock & {
   brand?: string;
   headline: string;
   summary?: string;
-  image: SanityImage;
+  image?: SanityImage;
+  video?: SanityVideo;
   imageAlt: string;
   primaryCta?: LinkField;
   secondaryCta?: LinkField;
@@ -40,6 +52,18 @@ export type IntroBlock = BaseBlock & {
   eyebrow?: string;
   headline: string;
   body?: RichText;
+};
+
+export type AnimatedHeadlineBlock = BaseBlock & {
+  _type: "animatedHeadlineBlock";
+  eyebrow?: string;
+  headline: string;
+  level?: "h1" | "h2";
+};
+
+export type PortableTextBlock = BaseBlock & {
+  _type: "portableTextBlock";
+  body: RichText;
 };
 
 export type SpaceSummary = {
@@ -129,6 +153,8 @@ export type CtaBlock = BaseBlock & {
 export type PageBuilderBlock =
   | HeroBlock
   | IntroBlock
+  | AnimatedHeadlineBlock
+  | PortableTextBlock
   | SpaceListBlock
   | FeatureListBlock
   | SplitContentBlock

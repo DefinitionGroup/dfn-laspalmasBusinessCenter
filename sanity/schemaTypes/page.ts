@@ -1,4 +1,25 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { createElement } from "react";
+
+function HomepageIcon() {
+  return createElement(
+    "svg",
+    {
+      "aria-label": "Homepage",
+      fill: "none",
+      height: "1em",
+      role: "img",
+      viewBox: "0 0 25 25",
+      width: "1em",
+    },
+    createElement("path", {
+      d: "M14.5 18.5V12.5H10.5V18.5M5.5 11.5V18.5H19.5V11.5L12.5 5.5L5.5 11.5Z",
+      stroke: "currentColor",
+      strokeLinejoin: "round",
+      strokeWidth: 1.2,
+    }),
+  );
+}
 
 export const page = defineType({
   name: "page",
@@ -78,6 +99,8 @@ export const page = defineType({
       of: [
         defineArrayMember({ type: "heroBlock" }),
         defineArrayMember({ type: "introBlock" }),
+        defineArrayMember({ type: "animatedHeadlineBlock" }),
+        defineArrayMember({ type: "portableTextBlock" }),
         defineArrayMember({ type: "spaceListBlock" }),
         defineArrayMember({ type: "featureListBlock" }),
         defineArrayMember({ type: "splitContentBlock" }),
@@ -91,6 +114,10 @@ export const page = defineType({
   ],
   preview: {
     select: { title: "title", language: "language", homepage: "isHomepage" },
-    prepare: ({ title, language, homepage }) => ({ title, subtitle: `${language?.toUpperCase() || ""}${homepage ? " · Homepage" : ""}` }),
+    prepare: ({ title, language, homepage }) => ({
+      title,
+      subtitle: `${language?.toUpperCase() || ""}${homepage ? " · Homepage" : ""}`,
+      media: homepage ? HomepageIcon : undefined,
+    }),
   },
 });

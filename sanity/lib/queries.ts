@@ -13,6 +13,13 @@ const pageProjection = `{
   metadata,
   content[]{
     ...,
+    _type == "heroBlock" => {
+      ...,
+      video{
+        ...,
+        asset->{"_ref": _id, url, mimeType}
+      }
+    },
     _type == "spaceListBlock" => {
       ...,
       spaces[]->{

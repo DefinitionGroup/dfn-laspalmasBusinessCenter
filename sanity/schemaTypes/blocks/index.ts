@@ -8,12 +8,36 @@ export const heroBlock = defineType({
     defineField({ name: "brand", title: "Brand signal", type: "string" }),
     defineField({ name: "headline", title: "Headline", type: "text", rows: 2, validation: (Rule) => Rule.required() }),
     defineField({ name: "summary", title: "Supporting sentence", type: "text", rows: 3 }),
-    defineField({ name: "image", title: "Full-bleed image", type: "image", options: { hotspot: true }, validation: (Rule) => Rule.required() }),
-    defineField({ name: "imageAlt", title: "Image alt text", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({
+      name: "image",
+      title: "Fallback / poster image",
+      type: "image",
+      description: "Used as the hero background when no video is selected, and as the video poster and reduced-motion fallback.",
+      options: { hotspot: true },
+      validation: (Rule) => Rule.custom((image, context) => {
+        const parent = context.parent as { video?: unknown } | undefined;
+        return image || parent?.video ? true : "Add an image or a background video.";
+      }),
+    }),
+    defineField({
+      name: "video",
+      title: "Background video",
+      type: "file",
+      description: "Optional full-bleed video. MP4 or WebM is recommended; playback is muted, looping and inline.",
+      options: { accept: "video/mp4,video/webm,video/quicktime" },
+    }),
+    defineField({ name: "imageAlt", title: "Media alternative text", type: "string", validation: (Rule) => Rule.required() }),
     defineField({ name: "primaryCta", title: "Primary CTA", type: "linkField" }),
     defineField({ name: "secondaryCta", title: "Secondary CTA", type: "linkField" }),
   ],
-  preview: { select: { title: "headline", media: "image" } },
+  preview: {
+    select: { headline: "headline", media: "image" },
+    prepare: ({ headline, media }) => ({
+      title: "Hero",
+      subtitle: headline || "No headline yet",
+      media,
+    }),
+  },
 });
 
 export const introBlock = defineType({
@@ -25,7 +49,72 @@ export const introBlock = defineType({
     defineField({ name: "headline", title: "Headline", type: "text", rows: 3, validation: (Rule) => Rule.required() }),
     defineField({ name: "body", title: "Body", type: "richText" }),
   ],
-  preview: { select: { title: "headline", subtitle: "eyebrow" } },
+  preview: {
+    select: { headline: "headline", eyebrow: "eyebrow" },
+    prepare: ({ headline, eyebrow }) => ({
+      title: "Editorial intro",
+      subtitle: headline || eyebrow || "No headline yet",
+    }),
+  },
+});
+
+export const animatedHeadlineBlock = defineType({
+  name: "animatedHeadlineBlock",
+  title: "Animated headline",
+  type: "object",
+  fields: [
+    defineField({ name: "eyebrow", title: "Eyebrow", type: "string" }),
+    defineField({
+      name: "headline",
+      title: "Headline",
+      type: "text",
+      rows: 3,
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "level",
+      title: "Heading level",
+      type: "string",
+      initialValue: "h2",
+      description: "Use H1 only when this is the main page heading.",
+      options: {
+        list: [
+          { title: "H1 — page heading", value: "h1" },
+          { title: "H2 — section heading", value: "h2" },
+        ],
+        layout: "radio",
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+  ],
+  preview: {
+    select: { headline: "headline" },
+    prepare: ({ headline }) => ({
+      title: "Animated headline",
+      subtitle: headline || "No headline yet",
+    }),
+  },
+});
+
+export const portableTextBlock = defineType({
+  name: "portableTextBlock",
+  title: "Portable text",
+  type: "object",
+  fields: [
+    defineField({
+      name: "body",
+      title: "Text",
+      type: "richText",
+      validation: (Rule) => Rule.required(),
+    }),
+  ],
+  preview: {
+    select: { text: "body.0.children.0.text" },
+    prepare: ({ text }) => ({
+      title: "Portable text",
+      subtitle: text || "No text yet",
+    }),
+  },
 });
 
 export const spaceListBlock = defineType({
@@ -44,7 +133,13 @@ export const spaceListBlock = defineType({
       validation: (Rule) => Rule.min(1),
     }),
   ],
-  preview: { select: { title: "headline", subtitle: "eyebrow" } },
+  preview: {
+    select: { headline: "headline", eyebrow: "eyebrow" },
+    prepare: ({ headline, eyebrow }) => ({
+      title: "Spaces index",
+      subtitle: headline || eyebrow || "No headline yet",
+    }),
+  },
 });
 
 export const featureListBlock = defineType({
@@ -70,7 +165,13 @@ export const featureListBlock = defineType({
       ],
     }),
   ],
-  preview: { select: { title: "headline", subtitle: "eyebrow" } },
+  preview: {
+    select: { headline: "headline", eyebrow: "eyebrow" },
+    prepare: ({ headline, eyebrow }) => ({
+      title: "Feature list",
+      subtitle: headline || eyebrow || "No headline yet",
+    }),
+  },
 });
 
 export const splitContentBlock = defineType({
@@ -93,7 +194,14 @@ export const splitContentBlock = defineType({
     }),
     defineField({ name: "cta", title: "Optional CTA", type: "linkField" }),
   ],
-  preview: { select: { title: "headline", subtitle: "eyebrow", media: "image" } },
+  preview: {
+    select: { headline: "headline", eyebrow: "eyebrow", media: "image" },
+    prepare: ({ headline, eyebrow, media }) => ({
+      title: "Split content",
+      subtitle: headline || eyebrow || "No headline yet",
+      media,
+    }),
+  },
 });
 
 export const galleryBlock = defineType({
@@ -120,7 +228,13 @@ export const galleryBlock = defineType({
       ],
     }),
   ],
-  preview: { select: { title: "headline", subtitle: "eyebrow" } },
+  preview: {
+    select: { headline: "headline", eyebrow: "eyebrow" },
+    prepare: ({ headline, eyebrow }) => ({
+      title: "Gallery",
+      subtitle: headline || eyebrow || "No headline yet",
+    }),
+  },
 });
 
 export const testimonialBlock = defineType({
@@ -138,7 +252,13 @@ export const testimonialBlock = defineType({
       validation: (Rule) => Rule.min(1),
     }),
   ],
-  preview: { select: { title: "headline", subtitle: "eyebrow" } },
+  preview: {
+    select: { headline: "headline", eyebrow: "eyebrow" },
+    prepare: ({ headline, eyebrow }) => ({
+      title: "Testimonials",
+      subtitle: headline || eyebrow || "Referenced testimonial content",
+    }),
+  },
 });
 
 export const locationBlock = defineType({
@@ -158,7 +278,13 @@ export const locationBlock = defineType({
       of: [defineArrayMember({ type: "object", fields: [defineField({ name: "label", title: "Label", type: "string" }), defineField({ name: "value", title: "Value", type: "string" })] })],
     }),
   ],
-  preview: { select: { title: "headline", subtitle: "address" } },
+  preview: {
+    select: { headline: "headline", address: "address" },
+    prepare: ({ headline, address }) => ({
+      title: "Location",
+      subtitle: headline || address || "No location details yet",
+    }),
+  },
 });
 
 export const ctaBlock = defineType({
@@ -172,12 +298,20 @@ export const ctaBlock = defineType({
     defineField({ name: "primaryCta", title: "Primary CTA", type: "linkField", validation: (Rule) => Rule.required() }),
     defineField({ name: "secondaryCta", title: "Secondary CTA", type: "linkField" }),
   ],
-  preview: { select: { title: "headline", subtitle: "eyebrow" } },
+  preview: {
+    select: { headline: "headline", eyebrow: "eyebrow" },
+    prepare: ({ headline, eyebrow }) => ({
+      title: "Call to action",
+      subtitle: headline || eyebrow || "No headline yet",
+    }),
+  },
 });
 
 export const pageBuilderBlocks = [
   heroBlock,
   introBlock,
+  animatedHeadlineBlock,
+  portableTextBlock,
   spaceListBlock,
   featureListBlock,
   splitContentBlock,

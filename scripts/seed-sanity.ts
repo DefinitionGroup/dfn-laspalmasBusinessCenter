@@ -201,6 +201,10 @@ function normalizeBlock(block: PageBuilderBlock, locale: Locale): Record<string,
       };
     case "introBlock":
       return { ...block, body: toPortableText(block.body, `${block._key}-body`) };
+    case "animatedHeadlineBlock":
+      return block;
+    case "portableTextBlock":
+      return { ...block, body: toPortableText(block.body, `${block._key}-body`) };
     case "spaceListBlock":
       return {
         ...block,
