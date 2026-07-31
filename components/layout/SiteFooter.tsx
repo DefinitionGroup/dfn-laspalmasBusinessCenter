@@ -11,6 +11,26 @@ export default function SiteFooter({
   settings: SiteSettings;
 }) {
   const year = new Date().getFullYear();
+  const accessCopy = locale === "es"
+    ? {
+        label: "Acceso",
+        access: "Acceso 365 días al año",
+        officeHours: "Horario de oficina",
+        weekdays: "Lunes a viernes",
+        opens: "Apertura",
+        closes: "Cierre",
+      }
+    : {
+        label: "Access",
+        access: "Access 365 days a year",
+        officeHours: "Office hours",
+        weekdays: "Monday to Friday",
+        opens: "Opens",
+        closes: "Closes",
+      };
+  const openingTime = settings.officeOpeningTime ?? "09:00";
+  const closingTime = settings.officeClosingTime ?? "18:00";
+
   return (
     <footer className="site-footer page-gutter">
       <div className="site-footer__brand">
@@ -29,9 +49,25 @@ export default function SiteFooter({
           {settings.phone.map((phone) => <a key={phone} href={`tel:${phone.replace(/\s/g, "")}`}>{phone}</a>)}
         </div>
         <div>
-          <p className="footer-label">Vegueta</p>
+          <p className="footer-label">{accessCopy.label}</p>
           <p>{settings.address}</p>
-          {settings.accessHours ? <p>{settings.accessHours}</p> : null}
+          <div className="site-footer__access">
+            <p>{accessCopy.access}</p>
+            <div className="site-footer__hours">
+              <span>{accessCopy.officeHours}</span>
+              <strong>{accessCopy.weekdays}</strong>
+              <dl>
+                <div>
+                  <dt>{accessCopy.opens}</dt>
+                  <dd>{openingTime}</dd>
+                </div>
+                <div>
+                  <dt>{accessCopy.closes}</dt>
+                  <dd>{closingTime}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
         </div>
       </div>
       <div className="site-footer__bottom">

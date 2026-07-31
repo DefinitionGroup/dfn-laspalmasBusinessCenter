@@ -117,6 +117,94 @@ export const portableTextBlock = defineType({
   },
 });
 
+export const contactFormBlock = defineType({
+  name: "contactFormBlock",
+  title: "Contact form",
+  type: "object",
+  groups: [
+    { name: "content", title: "Content", default: true },
+    { name: "labels", title: "Field labels" },
+    { name: "feedback", title: "Feedback" },
+  ],
+  fields: [
+    defineField({
+      name: "eyebrow",
+      title: "Eyebrow",
+      type: "string",
+      group: "content",
+      initialValue: "Contacto",
+    }),
+    defineField({
+      name: "headline",
+      title: "Headline",
+      type: "text",
+      rows: 2,
+      group: "content",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "intro",
+      title: "Introduction",
+      type: "text",
+      rows: 3,
+      group: "content",
+    }),
+    defineField({ name: "nameLabel", title: "Name", type: "string", group: "labels", initialValue: "Nombre" }),
+    defineField({ name: "companyLabel", title: "Company", type: "string", group: "labels", initialValue: "Empresa" }),
+    defineField({ name: "emailLabel", title: "Email", type: "string", group: "labels", initialValue: "Email" }),
+    defineField({ name: "phoneLabel", title: "Phone", type: "string", group: "labels", initialValue: "Teléfono" }),
+    defineField({ name: "interestLabel", title: "Interest", type: "string", group: "labels", initialValue: "Me interesa" }),
+    defineField({
+      name: "interestOptions",
+      title: "Interest options",
+      type: "array",
+      group: "labels",
+      of: [defineArrayMember({ type: "string" })],
+      options: { layout: "tags" },
+    }),
+    defineField({ name: "messageLabel", title: "Message", type: "string", group: "labels", initialValue: "Mensaje" }),
+    defineField({ name: "submitLabel", title: "Submit button", type: "string", group: "labels", initialValue: "Enviar consulta" }),
+    defineField({
+      name: "privacyNotice",
+      title: "Privacy note",
+      type: "text",
+      rows: 2,
+      group: "feedback",
+      initialValue: "Usaremos tus datos únicamente para responder a esta consulta.",
+    }),
+    defineField({
+      name: "successTitle",
+      title: "Success title",
+      type: "string",
+      group: "feedback",
+      initialValue: "Gracias. Hemos recibido tu mensaje.",
+    }),
+    defineField({
+      name: "successMessage",
+      title: "Success message",
+      type: "text",
+      rows: 2,
+      group: "feedback",
+      initialValue: "Nos pondremos en contacto contigo lo antes posible.",
+    }),
+    defineField({
+      name: "errorMessage",
+      title: "Error message",
+      type: "text",
+      rows: 2,
+      group: "feedback",
+      initialValue: "No hemos podido enviar el mensaje. Inténtalo de nuevo.",
+    }),
+  ],
+  preview: {
+    select: { headline: "headline" },
+    prepare: ({ headline }) => ({
+      title: "Contact form",
+      subtitle: headline || "No headline yet",
+    }),
+  },
+});
+
 export const spaceListBlock = defineType({
   name: "spaceListBlock",
   title: "Spaces index",
@@ -237,6 +325,98 @@ export const galleryBlock = defineType({
   },
 });
 
+export const googleMapBlock = defineType({
+  name: "googleMapBlock",
+  title: "Google Maps (privacy-first)",
+  type: "object",
+  groups: [
+    { name: "content", title: "Content", default: true },
+    { name: "location", title: "Map location" },
+    { name: "privacy", title: "Privacy and labels" },
+  ],
+  fields: [
+    defineField({ name: "eyebrow", title: "Eyebrow", type: "string", group: "content" }),
+    defineField({
+      name: "headline",
+      title: "Headline",
+      type: "string",
+      group: "content",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "address",
+      title: "Visible address",
+      type: "string",
+      group: "location",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "googleMapsQuery",
+      title: "Google Maps search query",
+      type: "string",
+      group: "location",
+      description: "Optional precise place name or latitude/longitude. The visible address is used when left empty.",
+    }),
+    defineField({
+      name: "zoom",
+      title: "Map zoom",
+      type: "number",
+      group: "location",
+      initialValue: 16,
+      validation: (Rule) => Rule.integer().min(12).max(20),
+    }),
+    defineField({
+      name: "previewImage",
+      title: "Privacy-safe map preview",
+      type: "image",
+      group: "location",
+      description:
+        "Shown before consent. This image is served by the website; Google Maps is not contacted. The built-in local map preview is used when empty.",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "imageAlt",
+      title: "Preview alternative text",
+      type: "string",
+      group: "location",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "activationLabel",
+      title: "Activation button",
+      type: "string",
+      group: "privacy",
+      initialValue: "Click to activate map",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "privacyNotice",
+      title: "Privacy notice",
+      type: "text",
+      rows: 2,
+      group: "privacy",
+      initialValue: "Google Maps is loaded only after you activate it. Google may then process your data.",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "directionsLabel",
+      title: "Directions link",
+      type: "string",
+      group: "privacy",
+      initialValue: "Open directions in Google Maps",
+      validation: (Rule) => Rule.required(),
+    }),
+  ],
+  preview: {
+    select: { address: "address", media: "previewImage" },
+    prepare: ({ address, media }) => ({
+      title: "Google Maps (privacy-first)",
+      subtitle: address || "No address yet",
+      media,
+    }),
+  },
+});
+
 export const testimonialBlock = defineType({
   name: "testimonialBlock",
   title: "Testimonials",
@@ -312,10 +492,12 @@ export const pageBuilderBlocks = [
   introBlock,
   animatedHeadlineBlock,
   portableTextBlock,
+  contactFormBlock,
   spaceListBlock,
   featureListBlock,
   splitContentBlock,
   galleryBlock,
+  googleMapBlock,
   testimonialBlock,
   locationBlock,
   ctaBlock,

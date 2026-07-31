@@ -1,0 +1,52 @@
+{
+  "name": "Las Palmas Business Center logo refresh",
+  "recommended": "las-palmas-business-center-logo.svg",
+  "exports": [
+    {
+      "filename": "las-palmas-business-center-logo.svg",
+      "preview": "previews/las-palmas-business-center-logo.png",
+      "title": "Las Palmas Business Center — Coastal Arc",
+      "description": "Recommended modern identity: an Atlantic blue architectural arc framing a golden sunrise, paired with a custom outlined wordmark.",
+      "format": "SVG 1.1",
+      "viewBox": "0 0 1200 360",
+      "background": "transparent",
+      "typography": "outlined vector paths"
+    },
+    {
+      "filename": "alternate-01-lp-horizon.svg",
+      "preview": "previews/alternate-01-lp-horizon.png",
+      "title": "Las Palmas Business Center — LP Horizon",
+      "description": "A compact LP monogram crossed by a golden horizon, designed for signage, social avatars, and small digital applications.",
+      "format": "SVG 1.1",
+      "viewBox": "0 0 1200 360",
+      "background": "transparent",
+      "typography": "outlined vector paths"
+    },
+    {
+      "filename": "alternate-02-open-pavilion.svg",
+      "preview": "previews/alternate-02-open-pavilion.png",
+      "title": "Las Palmas Business Center — Open Pavilion",
+      "description": "An open architectural pavilion containing a golden sun, expressing welcome, place, and contemporary workspace.",
+      "format": "SVG 1.1",
+      "viewBox": "0 0 1200 360",
+      "background": "transparent",
+      "typography": "outlined vector paths"
+    },
+    {
+      "filename": "alternate-03-solar-ring.svg",
+      "preview": "previews/alternate-03-solar-ring.png",
+      "title": "Las Palmas Business Center — Solar Ring",
+      "description": "A circular modern seal combining a rising sun, horizon, and office skyline for a confident standalone symbol.",
+      "format": "SVG 1.1",
+      "viewBox": "0 0 1200 360",
+      "background": "transparent",
+      "typography": "outlined vector paths"
+    }
+  ],
+  "palette": {
+    "atlantic": "#075D7A",
+    "atlanticDeep": "#073B4C",
+    "solar": "#F4A700"
+  },
+  "sourceReference": "/Users/martin/Desktop/logo_business_center.png"
+}

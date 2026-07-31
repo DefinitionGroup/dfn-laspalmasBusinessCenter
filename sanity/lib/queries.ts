@@ -83,6 +83,8 @@ export const getSiteShell = cache(async (locale: Locale): Promise<SiteShellData>
         email,
         receptionHours,
         accessHours,
+        officeOpeningTime,
+        officeClosingTime,
         defaultMetadata
       },
       "menu": *[_type == "menu" && language == $language][0]{

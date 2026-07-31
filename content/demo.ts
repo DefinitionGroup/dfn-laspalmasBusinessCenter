@@ -1,10 +1,34 @@
 import type {
+  GoogleMapBlock,
   Locale,
   MenuDocument,
   PageDocument,
   SiteSettings,
   SpaceSummary,
 } from "@/types/content";
+
+function privacyMapBlock(locale: Locale): GoogleMapBlock {
+  const isSpanish = locale === "es";
+
+  return {
+    _key: "google-map",
+    _type: "googleMapBlock",
+    eyebrow: isSpanish ? "Cómo llegar" : "How to get here",
+    headline: isSpanish ? "Encuéntranos en Vegueta." : "Find us in Vegueta.",
+    address: "C/ Agustín Millares 18, 35001 Las Palmas de Gran Canaria",
+    googleMapsQuery: "28.1008446,-15.4132020",
+    zoom: 16,
+    previewImage: "/images/lpbc-map-preview.png",
+    imageAlt: isSpanish
+      ? "Mapa de Vegueta con la ubicación de Las Palmas Business Center"
+      : "Map of Vegueta showing Las Palmas Business Center",
+    activationLabel: isSpanish ? "Haz clic para activar el mapa" : "Click to activate map",
+    privacyNotice: isSpanish
+      ? "Google Maps se cargará solo después de activarlo. Google podrá procesar tus datos a partir de ese momento."
+      : "Google Maps is loaded only after you activate it. Google may then process your data.",
+    directionsLabel: isSpanish ? "Abrir ruta en Google Maps" : "Open directions in Google Maps",
+  };
+}
 
 const office: SpaceSummary = {
   _id: "demo-space-office",
@@ -136,6 +160,7 @@ const esHome: PageDocument = {
         },
       ],
     },
+    privacyMapBlock("es"),
     {
       _key: "cta",
       _type: "ctaBlock",
@@ -217,6 +242,7 @@ const enHome: PageDocument = {
       tone: "sand",
       cta: { label: "Discover the center", href: "/en/the-center" },
     },
+    privacyMapBlock("en"),
     {
       _key: "cta",
       _type: "ctaBlock",
@@ -294,6 +320,106 @@ function servicePage({
   };
 }
 
+function contactPage(locale: Locale): PageDocument {
+  const isSpanish = locale === "es";
+  const slug = isSpanish ? "contacto" : "contact";
+  const title = isSpanish ? "Contacto" : "Contact";
+  const headline = isSpanish
+    ? "Hablemos de lo que necesitas."
+    : "Tell us what you need.";
+  const summary = isSpanish
+    ? "Cuéntanos qué espacio buscas y cuándo te gustaría empezar."
+    : "Let us know which space you need and when you would like to begin.";
+
+  return {
+    _id: `demo-${locale}-${slug}`,
+    title,
+    slug,
+    language: locale,
+    navbarVariant: "light",
+    metadata: {
+      title: `${title} | Las Palmas Business Center`,
+      description: summary,
+      image: "/images/meeting-room.jpg",
+    },
+    content: [
+      {
+        _key: "hero",
+        _type: "heroBlock",
+        brand: "Las Palmas Business Center",
+        headline,
+        summary,
+        image: "/images/meeting-room.jpg",
+        imageAlt: isSpanish
+          ? "Sala del centro de negocios"
+          : "Business center meeting room",
+        primaryCta: {
+          label: isSpanish ? "Escribirnos" : "Write to us",
+          href: "#contact-form",
+        },
+      },
+      {
+        _key: "contact-form",
+        _type: "contactFormBlock",
+        eyebrow: isSpanish ? "Contacto" : "Contact",
+        headline: isSpanish
+          ? "Tu próximo espacio empieza con una conversación."
+          : "Your next space starts with a conversation.",
+        intro: isSpanish
+          ? "Cuéntanos qué necesitas. Te responderemos personalmente para organizar una visita o resolver tus preguntas."
+          : "Tell us what you need. We will reply personally to arrange a visit or answer your questions.",
+        nameLabel: isSpanish ? "Nombre" : "Name",
+        companyLabel: isSpanish ? "Empresa" : "Company",
+        emailLabel: "Email",
+        phoneLabel: isSpanish ? "Teléfono" : "Phone",
+        interestLabel: isSpanish ? "Me interesa" : "I am interested in",
+        interestOptions: isSpanish
+          ? ["Despacho privado", "Sala de reuniones", "Coworking", "Oficina virtual", "Otro"]
+          : ["Private office", "Meeting room", "Coworking", "Virtual office", "Other"],
+        messageLabel: isSpanish ? "Mensaje" : "Message",
+        submitLabel: isSpanish ? "Enviar consulta" : "Send enquiry",
+        successTitle: isSpanish
+          ? "Gracias. Hemos recibido tu mensaje."
+          : "Thank you. We received your message.",
+        successMessage: isSpanish
+          ? "Nos pondremos en contacto contigo lo antes posible."
+          : "We will get back to you as soon as possible.",
+        errorMessage: isSpanish
+          ? "No hemos podido enviar el mensaje. Inténtalo de nuevo o llámanos."
+          : "We could not send the message. Please try again or call us.",
+        privacyNotice: isSpanish
+          ? "Usaremos tus datos únicamente para responder a esta consulta."
+          : "We will use your details only to respond to this enquiry.",
+      },
+      {
+        _key: "location",
+        _type: "locationBlock",
+        eyebrow: isSpanish ? "Vegueta" : "Vegueta",
+        headline: isSpanish
+          ? "También puedes venir a conocernos."
+          : "You can also come and meet us.",
+        address: "C/ Agustín Millares 18, 35001 Las Palmas de Gran Canaria",
+        body: isSpanish
+          ? "Estamos en el centro histórico de Las Palmas de Gran Canaria."
+          : "We are in the historic center of Las Palmas de Gran Canaria.",
+        details: [
+          {
+            _key: "phone",
+            label: isSpanish ? "Teléfono" : "Phone",
+            value: "+34 928 321 651",
+          },
+          {
+            _key: "email",
+            label: "Email",
+            value: "direccion@laspalmasbusiness.center",
+          },
+        ],
+      },
+      privacyMapBlock(locale),
+    ],
+  };
+}
+
 const esServiceFeatures = [
   { title: "Atención profesional", text: "Recepción de visitas, llamadas y correspondencia." },
   { title: "Servicios incluidos", text: "Internet, suministros, limpieza, mantenimiento y climatización." },
@@ -321,8 +447,8 @@ const demoPages: PageDocument[] = [
   servicePage({ locale: "en", slug: "virtual-office", title: "Virtual office", headline: "A professional presence in Las Palmas.", summary: "Business address, correspondence and support without a permanent office.", image: "/images/hero-building.jpg", imageAlt: "Las Palmas Business Center building", features: enServiceFeatures }),
   servicePage({ locale: "es", slug: "el-centro", title: "El centro", headline: "Tradición, modernidad y servicio en Vegueta.", summary: "Un edificio singular del casco histórico, completamente actualizado para trabajar y recibir clientes.", image: "/images/hero-building.jpg", imageAlt: "Interior del centro de negocios", features: esServiceFeatures }),
   servicePage({ locale: "en", slug: "the-center", title: "The center", headline: "Tradition, modernity and service in Vegueta.", summary: "A distinctive historic building fully updated for work and client meetings.", image: "/images/hero-building.jpg", imageAlt: "Business center interior", features: enServiceFeatures }),
-  servicePage({ locale: "es", slug: "contacto", title: "Contacto", headline: "Hablemos de lo que necesitas.", summary: "Cuéntanos qué espacio buscas y cuándo te gustaría empezar.", image: "/images/meeting-room.jpg", imageAlt: "Sala del centro de negocios", features: esServiceFeatures }),
-  servicePage({ locale: "en", slug: "contact", title: "Contact", headline: "Tell us what you need.", summary: "Let us know which space you need and when you would like to begin.", image: "/images/meeting-room.jpg", imageAlt: "Business center meeting room", features: enServiceFeatures }),
+  contactPage("es"),
+  contactPage("en"),
 ];
 
 const settings: SiteSettings = {
@@ -334,8 +460,10 @@ const settings: SiteSettings = {
   address: "C/ Agustín Millares 18, 35001 Las Palmas de Gran Canaria, España",
   phone: ["+34 928 321 651", "+34 928 316 232"],
   email: ["direccion@laspalmasbusiness.center"],
-  receptionHours: "Pendiente de confirmar",
+  receptionHours: "Lunes a viernes, de 09:00 a 18:00",
   accessHours: "Acceso 365 días al año",
+  officeOpeningTime: "09:00",
+  officeClosingTime: "18:00",
   defaultMetadata: {
     title: "Las Palmas Business Center",
     description:

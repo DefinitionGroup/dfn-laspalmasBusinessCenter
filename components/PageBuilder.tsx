@@ -1,7 +1,9 @@
 import CtaBlock from "@/components/blocks/CtaBlock";
 import AnimatedHeadlineBlock from "@/components/blocks/AnimatedHeadlineBlock";
+import ContactFormBlock from "@/components/blocks/ContactFormBlock";
 import FeatureListBlock from "@/components/blocks/FeatureListBlock";
 import GalleryBlock from "@/components/blocks/GalleryBlock";
+import GoogleMapBlock from "@/components/blocks/GoogleMapBlock";
 import HeroBlock from "@/components/blocks/HeroBlock";
 import IntroBlock from "@/components/blocks/IntroBlock";
 import LocationBlock from "@/components/blocks/LocationBlock";
@@ -24,6 +26,8 @@ export default function PageBuilder({ content, locale }: { content: PageBuilderB
         return <AnimatedHeadlineBlock key={block._key} block={block} />;
       case "portableTextBlock":
         return <PortableTextBlock key={block._key} block={block} />;
+      case "contactFormBlock":
+        return <ContactFormBlock key={block._key} block={block} locale={locale} />;
       case "spaceListBlock":
         return <SpaceListBlock key={block._key} block={block} locale={locale} />;
       case "featureListBlock":
@@ -32,6 +36,8 @@ export default function PageBuilder({ content, locale }: { content: PageBuilderB
         return <SplitContentBlock key={block._key} block={block} />;
       case "galleryBlock":
         return <GalleryBlock key={block._key} block={block} />;
+      case "googleMapBlock":
+        return <GoogleMapBlock key={block._key} block={block} />;
       case "testimonialBlock":
         return <TestimonialBlock key={block._key} block={block} />;
       case "locationBlock":

@@ -66,6 +66,25 @@ export type PortableTextBlock = BaseBlock & {
   body: RichText;
 };
 
+export type ContactFormBlock = BaseBlock & {
+  _type: "contactFormBlock";
+  eyebrow?: string;
+  headline: string;
+  intro?: string;
+  nameLabel?: string;
+  companyLabel?: string;
+  emailLabel?: string;
+  phoneLabel?: string;
+  interestLabel?: string;
+  interestOptions?: string[];
+  messageLabel?: string;
+  submitLabel?: string;
+  successTitle?: string;
+  successMessage?: string;
+  errorMessage?: string;
+  privacyNotice?: string;
+};
+
 export type SpaceSummary = {
   _id: string;
   title: string;
@@ -116,6 +135,20 @@ export type GalleryBlock = BaseBlock & {
   }>;
 };
 
+export type GoogleMapBlock = BaseBlock & {
+  _type: "googleMapBlock";
+  eyebrow?: string;
+  headline: string;
+  address: string;
+  googleMapsQuery?: string;
+  zoom?: number;
+  previewImage?: SanityImage;
+  imageAlt: string;
+  activationLabel?: string;
+  privacyNotice?: string;
+  directionsLabel?: string;
+};
+
 export type TestimonialSummary = {
   _id: string;
   quote: string;
@@ -155,10 +188,12 @@ export type PageBuilderBlock =
   | IntroBlock
   | AnimatedHeadlineBlock
   | PortableTextBlock
+  | ContactFormBlock
   | SpaceListBlock
   | FeatureListBlock
   | SplitContentBlock
   | GalleryBlock
+  | GoogleMapBlock
   | TestimonialBlock
   | LocationBlock
   | CtaBlock;
@@ -195,6 +230,8 @@ export type SiteSettings = {
   email: string[];
   receptionHours?: string;
   accessHours?: string;
+  officeOpeningTime?: string;
+  officeClosingTime?: string;
   defaultMetadata?: {
     title?: string;
     description?: string;

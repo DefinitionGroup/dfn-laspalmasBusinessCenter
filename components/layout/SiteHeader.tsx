@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Locale, MenuDocument, SiteSettings } from "@/types/content";
@@ -44,8 +45,16 @@ export default function SiteHeader({
     <header className={`site-header ${open ? "site-header--open" : ""} ${scrolled ? "site-header--scrolled" : ""}`}>
       <div className="site-header__bar page-gutter">
         <Link href={`/${locale}`} className="site-header__brand" aria-label={settings.brandName} onClick={() => setOpen(false)}>
-          <span>LAS PALMAS</span>
-          <strong>BUSINESS CENTER</strong>
+          <Image
+            className="site-header__brand-logo"
+            src="/brand/las-palmas-business-center-logo.png"
+            alt=""
+            width={200}
+            height={89}
+            sizes="(max-width: 640px) 136px, 180px"
+            priority
+            unoptimized
+          />
         </Link>
         <nav className="site-header__desktop" aria-label="Primary navigation">
           {menu.items.map((item) => <Link key={item._key} href={item.href}>{item.label}</Link>)}

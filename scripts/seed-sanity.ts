@@ -205,6 +205,8 @@ function normalizeBlock(block: PageBuilderBlock, locale: Locale): Record<string,
       return block;
     case "portableTextBlock":
       return { ...block, body: toPortableText(block.body, `${block._key}-body`) };
+    case "contactFormBlock":
+      return block;
     case "spaceListBlock":
       return {
         ...block,
@@ -234,6 +236,11 @@ function normalizeBlock(block: PageBuilderBlock, locale: Locale): Record<string,
           _type: "object",
           image: toImage(item.image),
         })),
+      };
+    case "googleMapBlock":
+      return {
+        ...block,
+        previewImage: toImage(block.previewImage),
       };
     case "testimonialBlock":
       return {

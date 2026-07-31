@@ -99,6 +99,18 @@ export const siteSettings = defineType({
     defineField({ name: "email", title: "Email addresses", type: "array", of: [defineArrayMember({ type: "string" })] }),
     defineField({ name: "receptionHours", title: "Reception hours", type: "string" }),
     defineField({ name: "accessHours", title: "Tenant access", type: "string" }),
+    defineField({
+      name: "officeOpeningTime",
+      title: "Office opening time",
+      type: "string",
+      description: "Use 24-hour time, for example 09:00.",
+    }),
+    defineField({
+      name: "officeClosingTime",
+      title: "Office closing time",
+      type: "string",
+      description: "Use 24-hour time, for example 18:00.",
+    }),
     defineField({ name: "defaultMetadata", title: "Default metadata", type: "metadata" }),
   ],
   preview: { select: { title: "brandName" } },
