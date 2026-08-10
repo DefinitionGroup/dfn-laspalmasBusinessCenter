@@ -200,9 +200,11 @@ export type PageBuilderBlock =
 
 export type PageDocument = {
   _id: string;
+  _updatedAt?: string;
   title: string;
   slug: string;
   language: Locale;
+  translationKey?: string;
   isHomepage?: boolean;
   navbarVariant?: "light" | "dark";
   metadata?: {
@@ -212,6 +214,11 @@ export type PageDocument = {
   };
   content: PageBuilderBlock[];
 };
+
+export type PageTranslation = Pick<
+  PageDocument,
+  "_id" | "_updatedAt" | "title" | "slug" | "language" | "translationKey" | "isHomepage"
+>;
 
 export type MenuDocument = {
   _id: string;
@@ -242,4 +249,5 @@ export type SiteSettings = {
 export type SiteShellData = {
   settings: SiteSettings;
   menu: MenuDocument;
+  translationPages: PageTranslation[];
 };

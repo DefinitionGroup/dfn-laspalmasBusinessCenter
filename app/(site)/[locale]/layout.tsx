@@ -1,8 +1,12 @@
 import { notFound } from "next/navigation";
 import SiteShell from "@/components/layout/SiteShell";
-import DocumentLanguage from "@/components/layout/DocumentLanguage";
+import { aspekta, nyght } from "@/app/fonts";
+import { baseMetadata } from "@/lib/page-metadata";
 import { getSiteShell } from "@/sanity/lib/queries";
 import { locales, type Locale } from "@/types/content";
+import "../../globals.css";
+
+export const metadata = baseMetadata;
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -21,9 +25,10 @@ export default async function LocaleLayout({
   const shell = await getSiteShell(locale);
 
   return (
-    <>
-      <DocumentLanguage locale={locale} />
-      <SiteShell locale={locale} data={shell}>{children}</SiteShell>
-    </>
+    <html lang={locale} className={`${aspekta.variable} ${nyght.variable}`}>
+      <body>
+        <SiteShell locale={locale} data={shell}>{children}</SiteShell>
+      </body>
+    </html>
   );
 }

@@ -16,6 +16,11 @@ import type { Locale, PageBuilderBlock } from "@/types/content";
 export default function PageBuilder({ content, locale }: { content: PageBuilderBlock[]; locale: Locale }) {
   if (!content?.length) return null;
 
+  const alreadyHasH1 = content.some(
+    (block) => block._type === "heroBlock" || (block._type === "animatedHeadlineBlock" && block.level === "h1"),
+  );
+  let promotedPortableTextHeading = false;
+
   return content.map((block) => {
     switch (block._type) {
       case "heroBlock":
@@ -25,7 +30,9 @@ export default function PageBuilder({ content, locale }: { content: PageBuilderB
       case "animatedHeadlineBlock":
         return <AnimatedHeadlineBlock key={block._key} block={block} />;
       case "portableTextBlock":
-        return <PortableTextBlock key={block._key} block={block} />;
+        const promoteFirstHeading = !alreadyHasH1 && !promotedPortableTextHeading;
+        promotedPortableTextHeading ||= promoteFirstHeading;
+        return <PortableTextBlock key={block._key} block={block} promoteFirstHeading={promoteFirstHeading} />;
       case "contactFormBlock":
         return <ContactFormBlock key={block._key} block={block} locale={locale} />;
       case "spaceListBlock":

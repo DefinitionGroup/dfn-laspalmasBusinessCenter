@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import path from "node:path";
+import { legacyRedirects } from "./lib/legacy-redirects";
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -21,6 +22,23 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/",
+        has: [{ type: "host", value: "laspalmasbusiness.center" }],
+        destination: "https://www.laspalmasbusiness.center/es",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "laspalmasbusiness.center" }],
+        destination: "https://www.laspalmasbusiness.center/:path*",
+        permanent: true,
+      },
+      ...legacyRedirects.map((redirect) => ({ ...redirect, permanent: true })),
+    ];
+  },
 };
 
 export default nextConfig;

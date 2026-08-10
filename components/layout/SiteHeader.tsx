@@ -2,18 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { Locale, MenuDocument, SiteSettings } from "@/types/content";
+import { alternatePath } from "@/lib/translations";
+import type { Locale, MenuDocument, PageTranslation, SiteSettings } from "@/types/content";
 
 export default function SiteHeader({
   locale,
   menu,
   settings,
+  translationPages,
 }: {
   locale: Locale;
   menu: MenuDocument;
   settings: SiteSettings;
+  translationPages: PageTranslation[];
 }) {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -40,6 +45,7 @@ export default function SiteHeader({
   }, [open]);
 
   const otherLocale = locale === "es" ? "en" : "es";
+  const otherLocalePath = alternatePath(pathname, otherLocale, translationPages) || `/${otherLocale}`;
 
   return (
     <header className={`site-header ${open ? "site-header--open" : ""} ${scrolled ? "site-header--scrolled" : ""}`}>
@@ -60,7 +66,7 @@ export default function SiteHeader({
           {menu.items.map((item) => <Link key={item._key} href={item.href}>{item.label}</Link>)}
         </nav>
         <div className="site-header__tools">
-          <Link className="site-header__locale" href={`/${otherLocale}`} onClick={() => setOpen(false)}>{otherLocale.toUpperCase()}</Link>
+          <Link className="site-header__locale" href={otherLocalePath} hrefLang={otherLocale} onClick={() => setOpen(false)}>{otherLocale.toUpperCase()}</Link>
           <button
             type="button"
             className="site-header__toggle"

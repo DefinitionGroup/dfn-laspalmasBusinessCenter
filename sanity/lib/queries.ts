@@ -1,13 +1,15 @@
 import { cache } from "react";
-import { getDemoHome, getDemoPage, getDemoPageSlugs, getDemoShell } from "@/content/demo";
-import type { Locale, PageDocument, SiteShellData } from "@/types/content";
+import { getDemoHome, getDemoPage, getDemoPageRecords, getDemoPageSlugs, getDemoShell } from "@/content/demo";
+import { locales, type Locale, type PageDocument, type PageTranslation, type SiteShellData } from "@/types/content";
 import { getSanityClient } from "./client";
 
 const pageProjection = `{
   _id,
+  _updatedAt,
   title,
   "slug": slug.current,
   language,
+  translationKey,
   isHomepage,
   navbarVariant,
   metadata,
@@ -71,7 +73,8 @@ export const getSiteShell = cache(async (locale: Locale): Promise<SiteShellData>
   const client = getSanityClient();
   if (!client) return getDemoShell(locale);
 
-  const shell = await client.fetch<SiteShellData | null>(
+  const [shell, translationPages] = await Promise.all([
+    client.fetch<Omit<SiteShellData, "translationPages"> | null>(
     `{
       "settings": *[_type == "siteSettings"][0]{
         _id,
@@ -96,21 +99,49 @@ export const getSiteShell = cache(async (locale: Locale): Promise<SiteShellData>
     }`,
     { language: locale },
     { next: { revalidate: 60, tags: ["site-shell", `menu:${locale}`] } },
-  );
+    ),
+    getAllPageRecords(),
+  ]);
 
   if (!shell?.settings || !shell?.menu) return getDemoShell(locale);
-  return shell;
+  return { ...shell, translationPages };
+});
+
+export const getAllPageRecords = cache(async (): Promise<PageTranslation[]> => {
+  const client = getSanityClient();
+  if (!client) return getDemoPageRecords();
+
+  const result = await client.fetch<PageTranslation[]>(
+    `*[_type == "page" && language in $languages && defined(slug.current)] | order(language asc, slug.current asc){
+      _id,
+      _updatedAt,
+      title,
+      "slug": slug.current,
+      language,
+      translationKey,
+      isHomepage
+    }`,
+    { languages: locales },
+    { next: { revalidate: 60, tags: ["page", "sitemap"] } },
+  );
+
+  const merged = new Map<string, PageTranslation>(
+    result.map((page) => [`${page.language}:${page.slug}`, page]),
+  );
+
+  for (const fallbackPage of getDemoPageRecords()) {
+    const key = `${fallbackPage.language}:${fallbackPage.slug}`;
+    if (!merged.has(key)) merged.set(key, fallbackPage);
+  }
+
+  return [...merged.values()];
 });
 
 export async function getAllPageSlugs(locale: Locale) {
-  const client = getSanityClient();
-  if (!client) return getDemoPageSlugs(locale);
+  const pages = await getAllPageRecords();
+  const slugs = pages
+    .filter((page) => page.language === locale && !page.isHomepage)
+    .map((page) => page.slug);
 
-  const result = await client.fetch<Array<{ slug: string }>>(
-    `*[_type == "page" && language == $language && isHomepage != true && defined(slug.current)][]{"slug": slug.current}`,
-    { language: locale },
-  );
-
-  const slugs = result.map((item) => item.slug);
   return slugs.length > 0 ? slugs : getDemoPageSlugs(locale);
 }

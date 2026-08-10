@@ -176,6 +176,7 @@ function makePageDocument(page: PageDocument): SeedDocument {
     _type: "page",
     title: page.title,
     language: page.language,
+    translationKey: page.translationKey,
     slug: { _type: "slug", current: page.slug },
     isHomepage: Boolean(page.isHomepage),
     navbarVariant: page.navbarVariant ?? "light",

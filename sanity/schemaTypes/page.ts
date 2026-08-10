@@ -63,6 +63,14 @@ export const page = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "translationKey",
+      title: "Translation group",
+      type: "string",
+      group: "basic",
+      description: "Use the same stable key for every translated version, for example private-offices.",
+      validation: (Rule) => Rule.custom((value) => value ? true : "Add a translation group to keep hreflang links editable.").warning(),
+    }),
+    defineField({
       name: "isHomepage",
       title: "Homepage",
       type: "boolean",

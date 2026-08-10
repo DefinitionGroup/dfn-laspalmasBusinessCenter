@@ -6,6 +6,7 @@ import type {
   SiteSettings,
   SpaceSummary,
 } from "@/types/content";
+import { staticTranslationKey } from "@/lib/translations";
 
 function privacyMapBlock(locale: Locale): GoogleMapBlock {
   const isSpanish = locale === "es";
@@ -79,6 +80,7 @@ const esHome: PageDocument = {
   title: "Inicio",
   slug: "home",
   language: "es",
+  translationKey: "home",
   isHomepage: true,
   navbarVariant: "light",
   metadata: {
@@ -179,6 +181,7 @@ const enHome: PageDocument = {
   _id: "demo-home-en",
   title: "Home",
   language: "en",
+  translationKey: "home",
   metadata: {
     title: "Las Palmas Business Center | Offices in Vegueta",
     description:
@@ -280,6 +283,7 @@ function servicePage({
     title,
     slug,
     language: locale,
+    translationKey: staticTranslationKey(`/${locale}/${slug}`) || slug,
     navbarVariant: "light",
     metadata: { title: `${title} | Las Palmas Business Center`, description: summary, image },
     content: [
@@ -336,6 +340,7 @@ function contactPage(locale: Locale): PageDocument {
     title,
     slug,
     language: locale,
+    translationKey: "contact",
     navbarVariant: "light",
     metadata: {
       title: `${title} | Las Palmas Business Center`,
@@ -506,11 +511,23 @@ export function getDemoPage(slug: string, locale: Locale): PageDocument | null {
 }
 
 export function getDemoShell(locale: Locale) {
-  return { settings, menu: menus[locale] };
+  return { settings, menu: menus[locale], translationPages: getDemoPageRecords() };
 }
 
 export function getDemoPageSlugs(locale: Locale) {
   return demoPages
     .filter((page) => page.language === locale && !page.isHomepage)
     .map((page) => page.slug);
+}
+
+export function getDemoPageRecords() {
+  return demoPages.map((page) => ({
+    _id: page._id,
+    _updatedAt: page._updatedAt,
+    title: page.title,
+    slug: page.slug,
+    language: page.language,
+    translationKey: page.translationKey,
+    isHomepage: page.isHomepage,
+  }));
 }

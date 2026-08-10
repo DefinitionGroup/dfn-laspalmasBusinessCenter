@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PageBuilder from "@/components/PageBuilder";
-import { resolveImageUrl } from "@/sanity/lib/image";
-import { getAllPageSlugs, getPageBySlug } from "@/sanity/lib/queries";
+import { buildPageMetadata } from "@/lib/page-metadata";
+import { getAllPageSlugs, getPageBySlug, getSiteShell } from "@/sanity/lib/queries";
 import { locales, type Locale } from "@/types/content";
 
 export const dynamicParams = true;
@@ -18,15 +18,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale: value, slug } = await params;
   if (!locales.includes(value as Locale)) return {};
   const locale = value as Locale;
-  const page = await getPageBySlug(slug, locale);
+  const [page, shell] = await Promise.all([getPageBySlug(slug, locale), getSiteShell(locale)]);
   if (!page) return {};
-  const image = resolveImageUrl(page.metadata?.image, { width: 1200, height: 630 });
-  return {
-    title: page.metadata?.title || page.title,
-    description: page.metadata?.description,
-    alternates: { canonical: `/${locale}/${slug}` },
-    openGraph: { title: page.metadata?.title || page.title, description: page.metadata?.description, images: image ? [image] : [] },
-  };
+  return buildPageMetadata({ page, locale, settings: shell.settings, translationPages: shell.translationPages });
 }
 
 export default async function DynamicPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {

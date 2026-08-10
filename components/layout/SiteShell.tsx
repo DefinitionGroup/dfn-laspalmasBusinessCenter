@@ -13,7 +13,7 @@ export default function SiteShell({
 }) {
   return (
     <>
-      <SiteHeader locale={locale} menu={data.menu} settings={data.settings} />
+      <SiteHeader locale={locale} menu={data.menu} settings={data.settings} translationPages={data.translationPages} />
       <main>{children}</main>
       <SiteFooter locale={locale} menu={data.menu} settings={data.settings} />
     </>
