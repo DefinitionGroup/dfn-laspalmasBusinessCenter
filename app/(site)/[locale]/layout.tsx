@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import SiteShell from "@/components/layout/SiteShell";
 import { aspekta, nyght } from "@/app/fonts";
 import { baseMetadata } from "@/lib/page-metadata";
@@ -26,6 +27,16 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={`${aspekta.variable} ${nyght.variable}`}>
+      <head>
+        <Script
+          id="Cookiebot"
+          src="https://consent.cookiebot.com/uc.js"
+          data-cbid="78c978e3-9c49-4559-90b8-e17382c8cb2a"
+          data-blockingmode="auto"
+          type="text/javascript"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body>
         <SiteShell locale={locale} data={shell}>{children}</SiteShell>
       </body>
